@@ -1,0 +1,68 @@
+{
+    "path": "C:\\Users\\Adryan\\AppData\\Local\\Google\\Chrome\\User Data",
+    "path_downloads": "C:\\Users\\Adryan\\Downloads\\images",
+    "profiles": [
+        {
+            "name": "maikeladryan",
+            "profile": "Profile 6",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 0
+        },
+        {
+            "name": "adrynhos2",
+            "profile": "Profile 2",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 4
+        },
+        {
+            "name": "adryankhn",
+            "profile": "Profile 8",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 4
+        },
+        {
+            "name": "adryankuhne",
+            "profile": "Profile 10",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 0
+        },
+        {
+            "name": "adryanmckuhne",
+            "profile": "Profile 11",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 4
+        },
+        {
+            "name": "WinxRoxa",
+            "profile": "Profile 12",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 4
+        },
+        {
+            "name": "cco",
+            "profile": "Profile 13",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 4
+        },
+        {
+            "name": "adryanviu",
+            "profile": "Profile 17",
+            "sizeimg": "9:16",
+            "prompt": "A digital painting in a semi-realistic, comic-inspired style depicting a confident Russian woman standing in a field of vibrant flowers under a clear blue sky. She has a warm, assured smile, with softly wavy hair moving slightly in the breeze. She is dressed in elegant and charming clothing—a stylish, well-fitted dress or a chic ensemble with tasteful details—paired with minimalistic accessories like a subtle necklace and a few thin bracelets. The image blends expressive brushwork and soft lighting with clean outlines and subtle stylization, creating a balanced, artistic atmosphere that feels both natural and slightly graphic, like a refined story panel from a high-quality graphic novel.",
+            "credits": 0
+        }
+    ],
+    "arguments": [
+        "--disable-blink-features=AutomationControlled",
+        "--remote-debugging-port=9222",
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+    ]
+}

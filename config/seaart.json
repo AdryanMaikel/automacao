@@ -1,0 +1,35 @@
+{
+    "url": "https://www.seaart.ai/pt",
+    "popup": {
+        "by": "class name",
+        "value": "popup_parent"
+    },
+    "buttons": [
+        {
+            "name": "create",
+            "by": "class name",
+            "value": "painting"
+        },
+        {
+            "name": "9:16",
+            "by": "xpath",
+            "value": "//*[@id='app']/section/div[7]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[3]/div[3]/div[2]/div[3]"
+        },
+        {
+            "name": "quantidade",
+            "by": "xpath",
+            "value": "/html/body/div[1]/div/div/section/div[7]/div/div[2]/div/div/div[2]/div[1]/div[1]/div[3]/div[4]/div[2]/div['quantidade']"
+        }
+    ],
+    "textarea": {
+        "by": "id",
+        "value": "easyGenerateInput"
+    },
+    "credits": {
+        "by": "xpath",
+        "value": "/html/body/div[1]/div/div/section/div[7]/div/div[2]/div/div/div[1]/div[2]/div[2]/div[2]/div"
+    },
+    "sizesimg": [
+        "2:3", "1:1", "9:16", "4:3"
+    ] 
+}
