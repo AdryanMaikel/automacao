@@ -139,17 +139,13 @@ def get_text_content(element: WebElement) -> str | int:
     return text_content
 
 
-def run(profile: Profile, second: bool = False) -> str:
+def run(profile: Profile, second: bool = False, default: bool = True) -> str:
     print(f"Abrindo perfil: {profile.name}")
     driver = get_chrome(profile)
     # input("Rodar perfil?")
     # return
     print("Indo para seaart")
     driver.get(seaart.url)
-
-    # if not second:
-    #     input("Clique no bagui")
-
     sleep(5)
     try:
         driver.execute_script(
@@ -158,17 +154,6 @@ def run(profile: Profile, second: bool = False) -> str:
     except Exception as e:
         print(e)
         pass
-    #     print("Verificando se o popup está presente: ", end="")
-    #     if is_element_present(driver, **elements.close_button, time=10):
-    #         try:
-    #             sleep(3)
-    #             # driver.find_element(**elements.close_button).click()
-    #             if click_element(driver, **elements.close_button, time=5):
-    #                 print("fechado.")
-    #         except Exception:
-    #             print("não fechado.")
-    #     else:
-    #         print("não encontrado.")
 
     print("Procurando botão de criação: ", end="")
     if not is_element_present(driver, **elements.goto_create, time=5):
@@ -254,37 +239,45 @@ def run(profile: Profile, second: bool = False) -> str:
         if type == profile.sizeimg:
             button.click()
 
-    if stamina >= 6:
+    qnt_first = 2
+    qnt_second = 0
+
+    if stamina <= 12:
         qnt_first = 1
         qnt_second = 0
 
-    if stamina >= 12:
-        qnt_first = 2
-        qnt_second = 0
+    if default:
+        if stamina >= 6:
+            qnt_first = 1
+            qnt_second = 0
 
-    if stamina >= 18:
-        qnt_first = 3
-        qnt_second = 0
+        if stamina >= 12:
+            qnt_first = 2
+            qnt_second = 0
 
-    if stamina >= 24:
-        qnt_first = 4
-        qnt_second = 0
+        if stamina >= 18:
+            qnt_first = 3
+            qnt_second = 0
 
-    if stamina >= 30:
-        qnt_first = 4
-        qnt_second = 1
+        if stamina >= 24:
+            qnt_first = 4
+            qnt_second = 0
 
-    if stamina >= 36:
-        qnt_first = 4
-        qnt_second = 2
+        if stamina >= 30:
+            qnt_first = 4
+            qnt_second = 1
 
-    if stamina >= 42:
-        qnt_first = 4
-        qnt_second = 3
+        if stamina >= 36:
+            qnt_first = 4
+            qnt_second = 2
 
-    if stamina >= 48:
-        qnt_first = 4
-        qnt_second = 4
+        if stamina >= 42:
+            qnt_first = 4
+            qnt_second = 3
+
+        if stamina >= 48:
+            qnt_first = 4
+            qnt_second = 4
 
     print(f"Colocando para gerar {qnt_first} imagens: ", end="")
     div_quantity = driver.find_element(By.CLASS_NAME, "panel-item-content-4")
@@ -325,9 +318,60 @@ def run(profile: Profile, second: bool = False) -> str:
         )
     sleep(3)
 
+    data_atual = dt.now(tz.utc).strftime("%A, %B %d, %Y")
+    div = None
+    while True:
+        try:
+            print("Procurando dia de hoje: ", end="")
+            div = driver.find_element(**elements.div_images)
+            text = div.find_element(**elements.text_date_images).text
+            print(text)
+            if text and text == data_atual:
+                text_creation = div.find_element(
+                    **elements.text_type_creation).text
+                if text_creation and text_creation == "Txt2Img":
+                    if div.find_element(**elements.images):
+                        print("Encontrado.")
+                        break
+
+        except Exception:
+            sleep(3)
+            continue
+    if not div:
+        print("Div não encontrada, algo deu errado.")
+        return
+
+    print("Clicando na imagem: ", end="")
+    driver.execute_script(
+        "document.querySelector('.image-hover-mask').click();"
+        )
+    sleep(2)
+    print("pronto, clicando no botão de upperscale: ", end="")
+    driver.execute_script("""\
+document.querySelectorAll(
+    ".task-image-viewer__side-bar .el-tooltip"
+)[1].click()""")
+    print("pronto")
+
+    if qnt_first > 1:
+        sleep(2)
+        print("Clicando na imagem: ", end="")
+        driver.execute_script(
+            "document.querySelectorAll('.image-hover-mask')[1].click();"
+            )
+        sleep(2)
+        print("pronto, clicando no botão de upperscale: ", end="")
+        driver.execute_script("""\
+document.querySelectorAll(
+    ".task-image-viewer__side-bar .el-tooltip"
+)[1].click()""")
+        print("pronto")
+        sleep(2)
+
     if qnt_second <= 0:
         return
 
+    return
     sleep(5)
 
     print(f"Colocando para gerar {qnt_second} imagens: ", end="")
@@ -370,10 +414,9 @@ def run(profile: Profile, second: bool = False) -> str:
 def download_image(url: str, index: int, profile_name: str):
     try:
         date_str = dt.now().strftime("%d_%m_%Y")
-        directory = os.path.join(os.getcwd(), "img")
+        directory = os.path.join(os.getcwd(), "img", date_str, "seaart")
         os.makedirs(directory, exist_ok=True)
-        file_name = os.path.join(directory,
-                                 f"{profile_name}_{date_str}_{index}.png")
+        file_name = os.path.join(directory, f"{profile_name}_{index}.png")
 
         if os.path.exists(file_name):
             print(f"Imagem {file_name} já existe. Pulando download.")
@@ -416,7 +459,8 @@ def download_images(profile: Profile):
     # data_atual = (dt.now(tz.utc) - td(days=1)).strftime("%A, %B %d, %Y")
     div_images = driver.find_elements(**elements.div_images)
     scroll_element(driver)
-    for i, div in enumerate(div_images):
+    i = 1
+    for _, div in enumerate(div_images):
         if i != 0:
             try:
                 text = div.find_element(**elements.text_date_images).text.\
@@ -429,18 +473,22 @@ def download_images(profile: Profile):
                 pass
         try:
             sleep(1)
-            images = div.find_elements(**elements.images)
-            for j, image in enumerate(images):
-                image_url = image.get_attribute("src")
-                print(image_url)
-                download_image(image_url, f"{i}{j}", profile.name)
+            text_creation = div.find_element(
+                    **elements.text_type_creation).text
+            if text_creation and text_creation == "Upscaling":
+                images = div.find_elements(**elements.images)
+                for _, image in enumerate(images):
+                    image_url = image.get_attribute("src")
+                    print(image_url)
+                    download_image(image_url, i, profile.name)
+                    i += 1
         except Exception:
             pass
 
 
 def scroll_element(driver: Chrome,
-                   scroll_pause_time: float = 1.0,
-                   increment: int = 500):
+                   scroll_pause_time: float = 1,
+                   increment: int = 700):
     """Rola um elemento específico em incrementos de
 400 pixels com uma pausa de 1 segundo."""
     element = driver.find_element(**elements.scroll)
@@ -448,7 +496,7 @@ def scroll_element(driver: Chrome,
     # last_height = driver.execute_script("return arguments[0].scrollHeight",
     #                                     element)
 
-    for _ in range(8):
+    for _ in range(20):
         driver.execute_script("""\
 arguments[0].scrollTo({
     top: """+str(current_position+increment)+""",
@@ -461,6 +509,6 @@ arguments[0].scrollTo({
 if __name__ == "__main__":
     for _, profile in enumerate(chrome.profiles, start=1):
         try:
-            run(profile, False)
+            run(profile, False, False)
         except Exception:
             continue

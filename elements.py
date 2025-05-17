@@ -35,7 +35,10 @@ buttons_quantity_images = Element(By.CLASS_NAME,
 button_close_popup = Element(By.CLASS_NAME, "user-daily-close")
 
 div_images = Element(By.CSS_SELECTOR, ".c-easy-msg-item")
+text_type_creation = Element(By.CSS_SELECTOR,
+                             ".msg-item-header-info-panel-tag")
 text_date_images = Element(By.CSS_SELECTOR, ".easy-msg-item-time-box")
+image_hover = Element(By.CSS_SELECTOR, ".image-hover-mask")
 images = Element(By.CSS_SELECTOR, ".media-attachments-img")
 
 scroll = Element(By.CSS_SELECTOR, ".c-easy-task-view-scroll-wrap")
