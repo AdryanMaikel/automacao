@@ -1,3 +1,3 @@
-from .models import seaart, chrome
+from .models import chrome
 
-__all__ = ["seaart", "chrome"]
+__all__ = ["chrome"]

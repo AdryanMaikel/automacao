@@ -1,23 +1,27 @@
+# from random import uniform
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.remote.webelement import WebElement
+import requests
 
-from config import seaart, chrome
+from config import chrome
 from config.models import Profile
 import elements
-import requests
-import os
 
+import os
 from typing import Union
 from subprocess import Popen
 from time import sleep
 from psutil import process_iter, Process
-from datetime import datetime as dt, timezone as tz
+from datetime import datetime as dt, timedelta as td, timezone as tz
+
+
+seaart_url = "https://www.seaart.ai/pt"
 
 
 def close_chrome_if_it_is_running():
@@ -28,15 +32,14 @@ def close_chrome_if_it_is_running():
                 try:
                     proc = Process(process.pid)
                     proc.kill()
-                except Exception as e:
-                    print(f"Erro ao encerrar o processo {process.pid}: {e}")
+                except Exception:
+                    pass
     except Exception as e:
         print(f"Erro ao iterar pelos processos: {e}")
 
 
 def get_chrome(profile: Profile,
-               close_chrome: bool = True,
-               open_chrome: bool = True
+               close_chrome: bool = True
                ) -> Union[None, Chrome]:
     if not profile:
         print(f"Perfil não encontrado: {profile.name}")
@@ -76,23 +79,6 @@ def get_chrome(profile: Profile,
         print(f"Erro ao abrir o navegador: {e}")
 
 
-def is_element_present(driver: Chrome,
-                       element: dict[str, str] = {},
-                       by: By = "",
-                       value: str = "",
-                       time: int = 0
-                       ) -> bool:
-    try:
-        WebDriverWait(driver, time).until(
-            EC.presence_of_element_located(
-                locator=(element.get("by", by), element.get("value", value))
-            )
-        )
-        return True
-    except Exception:
-        return False
-
-
 def element_present_in_element(driver: Chrome,
                                parent_element: WebElement,
                                element: dict[str, str],
@@ -107,30 +93,6 @@ def element_present_in_element(driver: Chrome,
         return False
 
 
-def click_element(driver: Chrome,
-                  element: dict[str, str] = {},
-                  by: By = "",
-                  value: str = "",
-                  time: int = 15,
-                  print_error: bool = False
-                  ) -> bool:
-    try:
-        button = WebDriverWait(driver, time).until(
-            EC.element_to_be_clickable(
-                mark=(element.get("by", by), element.get("value", value))
-            )
-        )
-        if not button:
-            raise Exception("botão não encontrado.")
-        button.click()
-        return True
-    except Exception as e:
-        print("Erro ao clicar no botão.")
-        if print_error:
-            print(f"Erro: {e}")
-        return False
-
-
 def get_text_content(element: WebElement) -> str | int:
     text_content = str(element.text).strip()
     if type == int:
@@ -139,282 +101,11 @@ def get_text_content(element: WebElement) -> str | int:
     return text_content
 
 
-def run(profile: Profile, second: bool = False, default: bool = True) -> str:
-    print(f"Abrindo perfil: {profile.name}")
-    driver = get_chrome(profile)
-    # input("Rodar perfil?")
-    # return
-    print("Indo para seaart")
-    driver.get(seaart.url)
-    sleep(5)
-    try:
-        driver.execute_script(
-            "document.querySelectorAll('.close-btn')[1].click();"
-        )
-    except Exception as e:
-        print(e)
-        pass
-
-    print("Procurando botão de criação: ", end="")
-    if not is_element_present(driver, **elements.goto_create, time=5):
-        print("não encontrado.")
-        return
-    try:
-        click_element(driver, **elements.goto_create)
-        print("clicado.")
-    except Exception as e:
-        print(f"Erro ao clicar no botão de criação: {e}")
-        return
-
-    if not second:
-        print("Produrando daily-popup: ", end="")
-        if is_element_present(driver, **elements.button_close_popup, time=5):
-            try:
-                click_element(driver, **elements.button_close_popup)
-            except Exception:
-                print("não clicado.")
-                return
-        else:
-            print("não encontrado.")
-
-        print("Verificando se tem tem recompensa adicional: ", end="")
-        try:
-            if is_element_present(driver, **elements.gift, time=5):
-                click_element(driver, **elements.gift)
-                print("clicado.")
-                sleep(3)
-                print("Verificando se da pra resgatar: ", end="")
-                if is_element_present(driver, **elements.claim, time=5):
-                    click_element(driver, **elements.claim)
-                    print("clicado.")
-                    print("Fechando recompensa.")
-                    if is_element_present(driver,
-                                          **elements.close_btn, time=5):
-                        click_element(driver, **elements.close_btn)
-                        print("fechado.")
-                    sleep(3)
-                else:
-                    print("não encontrado.")
-        except Exception:
-            print("não encontrado.")
-
-    # return
-
-    sleep(5)
-
-    print("Procurando stamina: ", end="")
-    if not is_element_present(driver, **elements.stamina, time=5):
-        print("não encontrado.")
-        return
-    try:
-        element_stamina = driver.find_element(**elements.stamina)
-    except Exception as e:
-        print(f"Erro ao encontrar a stamina: {e}")
-        return
-    stamina = get_text_content(element_stamina)
-    if not stamina:
-        return
-    stamina = int(stamina)
-    profile.credits = stamina
-    print(stamina)
-    chrome.update_json_config()
-    if stamina < 6:
-        print("stamina insuficiente.")
-        return
-
-    # input()
-
-    print(f"Colocando para gerar imagens: {profile.sizeimg} ", end="")
-    selector_div_sizes = {"by": By.CLASS_NAME, "value": "panel-item-content-5"}
-    selector_panel_item = {"by": By.CLASS_NAME, "value": "panel-item"}
-    if not is_element_present(driver, **selector_div_sizes):
-        print("Div para alterar tamanho das imagens não encontrada.")
-        return False
-    div_sizes = driver.find_element(**selector_div_sizes)
-    buttons = div_sizes.find_elements(**selector_panel_item)
-    for button in buttons:
-        type = button.find_element(By.CLASS_NAME, "panel-item-label").text
-        if type not in seaart.sizesimg:
-            continue
-        if type == profile.sizeimg:
-            button.click()
-
-    qnt_first = 2
-    qnt_second = 0
-
-    if stamina <= 12:
-        qnt_first = 1
-        qnt_second = 0
-
-    if default:
-        if stamina >= 6:
-            qnt_first = 1
-            qnt_second = 0
-
-        if stamina >= 12:
-            qnt_first = 2
-            qnt_second = 0
-
-        if stamina >= 18:
-            qnt_first = 3
-            qnt_second = 0
-
-        if stamina >= 24:
-            qnt_first = 4
-            qnt_second = 0
-
-        if stamina >= 30:
-            qnt_first = 4
-            qnt_second = 1
-
-        if stamina >= 36:
-            qnt_first = 4
-            qnt_second = 2
-
-        if stamina >= 42:
-            qnt_first = 4
-            qnt_second = 3
-
-        if stamina >= 48:
-            qnt_first = 4
-            qnt_second = 4
-
-    print(f"Colocando para gerar {qnt_first} imagens: ", end="")
-    div_quantity = driver.find_element(By.CLASS_NAME, "panel-item-content-4")
-    buttons = div_quantity.find_elements(**selector_panel_item)
-
-    if len(buttons) < qnt_first:
-        print("Quantidade de botões insuficiente.")
-        return False
-
-    button_quantity = buttons[qnt_first - 1]
-
-    if not button_quantity:
-        print("Botão de quantidade não encontrado")
-        return False
-    if "active-btn" not in button_quantity.get_attribute("class"):
-        button_quantity.click()
-
-    print("Procurando textarea: ", end="")
-    if not is_element_present(driver, **elements.textarea):
-        print("não encontrado.")
-        return
-    try:
-        textarea = driver.find_element(**elements.textarea)
-        if textarea.get_attribute("value"):
-            textarea.clear()
-        textarea.send_keys(profile.prompt)
-    except Exception:
-        print("Falha ao escrever prompt.")
-        return
-
-    sleep(1)
-
-    # input("CLICAR NO BOTÂO DE GERAR?")
-
-    print("Gerando imagens.")
-    driver.execute_script(
-        "document.querySelectorAll('.generate-btn')[2].click();"
-        )
-    sleep(3)
-
-    data_atual = dt.now(tz.utc).strftime("%A, %B %d, %Y")
-    div = None
-    while True:
-        try:
-            print("Procurando dia de hoje: ", end="")
-            div = driver.find_element(**elements.div_images)
-            text = div.find_element(**elements.text_date_images).text
-            print(text)
-            if text and text == data_atual:
-                text_creation = div.find_element(
-                    **elements.text_type_creation).text
-                if text_creation and text_creation == "Txt2Img":
-                    if div.find_element(**elements.images):
-                        print("Encontrado.")
-                        break
-
-        except Exception:
-            sleep(3)
-            continue
-    if not div:
-        print("Div não encontrada, algo deu errado.")
-        return
-
-    print("Clicando na imagem: ", end="")
-    driver.execute_script(
-        "document.querySelector('.image-hover-mask').click();"
-        )
-    sleep(2)
-    print("pronto, clicando no botão de upperscale: ", end="")
-    driver.execute_script("""\
-document.querySelectorAll(
-    ".task-image-viewer__side-bar .el-tooltip"
-)[1].click()""")
-    print("pronto")
-
-    if qnt_first > 1:
-        sleep(2)
-        print("Clicando na imagem: ", end="")
-        driver.execute_script(
-            "document.querySelectorAll('.image-hover-mask')[1].click();"
-            )
-        sleep(2)
-        print("pronto, clicando no botão de upperscale: ", end="")
-        driver.execute_script("""\
-document.querySelectorAll(
-    ".task-image-viewer__side-bar .el-tooltip"
-)[1].click()""")
-        print("pronto")
-        sleep(2)
-
-    if qnt_second <= 0:
-        return
-
-    return
-    sleep(5)
-
-    print(f"Colocando para gerar {qnt_second} imagens: ", end="")
-    div_quantity = driver.find_element(By.CLASS_NAME, "panel-item-content-4")
-    buttons = div_quantity.find_elements(**selector_panel_item)
-
-    if len(buttons) < qnt_second:
-        print("Quantidade de botões insuficiente.")
-        return False
-
-    button_quantity = buttons[qnt_second - 1]
-
-    if not button_quantity:
-        print("Botão de quantidade não encontrado")
-        return False
-    if "active-btn" not in button_quantity.get_attribute("class"):
-        button_quantity.click()
-
-    print("Procurando textarea: ", end="")
-    if not is_element_present(driver, **elements.textarea):
-        print("não encontrado.")
-        return
-    try:
-        textarea = driver.find_element(**elements.textarea)
-        if textarea.get_attribute("value"):
-            textarea.clear()
-        textarea.send_keys(profile.prompt)
-    except Exception:
-        print("Falha ao escrever prompt.")
-        return
-
-    sleep(1)
-    print("Gerando imagens.")
-    driver.execute_script(
-        "document.querySelectorAll('.generate-btn')[2].click();"
-        )
-    sleep(3)
-
-
-def download_image(url: str, index: int, profile_name: str):
+def download_image(url: str, index: int, profile_name: str,
+                   folder: str = "seaart"):
     try:
         date_str = dt.now().strftime("%d_%m_%Y")
-        directory = os.path.join(os.getcwd(), "img", date_str, "seaart")
+        directory = os.path.join(os.getcwd(), "img", date_str, folder)
         os.makedirs(directory, exist_ok=True)
         file_name = os.path.join(directory, f"{profile_name}_{index}.png")
 
@@ -436,14 +127,11 @@ def download_images(profile: Profile):
     print(f"Abrindo perfil: {profile.name}")
     driver = get_chrome(profile)
     print("Indo para seaart")
-    driver.get(seaart.url)
+    driver.get(seaart_url)
+    sleep(3)
 
-    print("Procurando botão de criação: ", end="")
-    if not is_element_present(driver, **elements.goto_create, time=5):
-        print("não encontrado.")
-        return
     try:
-        click_element(driver, **elements.goto_create)
+        driver.find_element(**elements.goto_create).click()
         print("clicado.")
     except Exception as e:
         print(f"Erro ao clicar no botão de criação: {e}")
@@ -453,31 +141,23 @@ def download_images(profile: Profile):
 
     print("Procurando div de imagens:")
 
-    data_atual = dt.now(tz.utc).strftime("%A, %B %d, %Y")
-    print("\n", data_atual, "\n")
-    # data_atual = "Tuesday, March 11, 2025"
-    # data_atual = (dt.now(tz.utc) - td(days=1)).strftime("%A, %B %d, %Y")
+    dt_now = dt.now(tz.utc) - td(hours=3)
     div_images = driver.find_elements(**elements.div_images)
     scroll_element(driver)
     i = 1
-    for _, div in enumerate(div_images):
-        if i != 0:
-            try:
-                text = div.find_element(**elements.text_date_images).text.\
-                    strip()
-                print(text)
-                if text and text != data_atual:
-                    print(text)
-                    break
-            except Exception:
-                pass
+    for div in div_images:
+        try:
+            text = div.find_element(**elements.text_date_images).text
+            if dt.strptime(text, "%A, %B %d, %Y").date() != dt_now.date():
+                break
+        except Exception:
+            pass
         try:
             sleep(1)
-            text_creation = div.find_element(
-                    **elements.text_type_creation).text
-            if text_creation and text_creation == "Upscaling":
+            tag = div.find_element(**elements.text_type_creation)
+            if tag.text == "Upscaling":
                 images = div.find_elements(**elements.images)
-                for _, image in enumerate(images):
+                for image in images:
                     image_url = image.get_attribute("src")
                     print(image_url)
                     download_image(image_url, i, profile.name)
@@ -506,9 +186,240 @@ arguments[0].scrollTo({
         current_position += increment
 
 
+def run2(profile: Profile,
+         second: bool = False,
+         close_chrome: bool = True
+         ) -> str:
+
+    if int(profile.credits) < 12 and second:
+        return
+
+    print(f"Abrindo perfil: {profile.name}")
+    driver = get_chrome(profile, close_chrome=close_chrome)
+    print("Indo para seaart")
+    driver.get(seaart_url)
+
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
+    )
+    sleep(3)
+
+    if not second:
+        print("fechando popup")
+        try:
+            driver.find_element(
+                By.CSS_SELECTOR,
+                ".popup-manager-container .close-btn"
+            ).click()
+        except Exception:
+            print("Falha ao fechar popup")
+
+    sleep(1)
+
+    print("Indo para area de criação")
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".painting").click()
+    except Exception:
+        print("falha ao ir para area de criação!")
+        return
+
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
+    )
+
+    sleep(2)
+    if not second:
+        try:
+            driver.find_element(By.CSS_SELECTOR,
+                                ".user-daily .user-daily-close"
+                                ).click()
+        except Exception:
+            print("Erro ao fechar user-daily")
+
+        print("Abrindo baú")
+        try:
+            driver.find_element(**elements.gift).click()
+            sleep(1)
+            print("Resgatando recompensa")
+            driver.find_element(**elements.claim).click()
+            print("Fechando recompensa")
+            driver.find_element(**elements.close_btn).click()
+            sleep(1)
+        except Exception:
+            print("Erro ao resgatar recompensa.")
+
+    print("Verificando creditos: ", end="")
+    try:
+        sleep(5)
+        stamina = get_text_content(
+            driver.find_element(
+                By.CSS_SELECTOR, ".generate-body .stamina .number"
+                )
+            )
+        print(stamina)
+        profile.credits = int(stamina)
+        chrome.update_json_config()
+    except Exception:
+        print("falha em localizar a stamina")
+
+    sleep(1)
+
+    if int(profile.credits) < 12:
+        print("Sem stamina.")
+        return
+
+    print("Clicando para melhorar o prompt.")
+    try:
+        driver.find_element(
+            By.CSS_SELECTOR,
+            "div[data-event='generate-magic-mode-open']"
+        ).click()
+    except Exception:
+        print("Erro ao colocar para melhorar prompt")
+
+    sleep(1)
+
+    print("Clicando no tamanho da imagem.")
+    try:
+
+        driver.execute_script("""\
+document.querySelectorAll(".image-size-options-content-item")[1].click()\
+""")
+        sleep(1)
+
+        inputs = driver.find_elements(By.CSS_SELECTOR,
+                                      ".is-without-controls input")
+        if inputs:
+            for _ in inputs[0].get_attribute("value"):
+                inputs[0].send_keys(Keys.BACKSPACE)
+                sleep(0.05)
+            inputs[0].send_keys("540")
+            for _ in inputs[1].get_attribute("value"):
+                inputs[1].send_keys(Keys.BACKSPACE)
+                sleep(0.05)
+            inputs[1].send_keys("960")
+
+    except Exception:
+        print("Falha ao colocar em proporção.")
+
+    sleep(1)
+    qnt = min(int(profile.credits) // 12, 2)
+
+    print(f"Colocando {qnt} imagens a gerar")
+    try:
+        div = driver.find_element(By.CLASS_NAME, "panel-item-content-4")
+        button = div.find_elements(By.CLASS_NAME, "panel-item")[qnt-1]
+        if "active-btn" not in button.get_attribute("class"):
+            button.click()
+    except Exception:
+        print(f"Falha ao clicar para gerar: {qnt}")
+
+    sleep(1)
+
+    print("Esrevendo prompt")
+    try:
+        textarea = driver.find_element(By.ID, "easyGenerateInput")
+        if textarea.get_attribute("value"):
+            textarea.clear()
+        textarea.send_keys(profile.prompt)
+    except Exception:
+        print("Falha ao escrever prompt.")
+        return
+
+    sleep(1)
+
+    print("Esperando criação.", end="")
+    while True:
+        try:
+            divs = driver.find_elements(By.CSS_SELECTOR, ".c-easy-msg-item")
+            total = len(divs)
+            for i in range(2 if total > 2 else total):
+                divs[i].find_element(By.CSS_SELECTOR, ".media-attachments-img")
+            break
+        except Exception:
+            sleep(1.5)
+            print(".", end="")
+
+    try:
+        driver.find_elements(By.CSS_SELECTOR,
+                             ".top-input-box .generate-btn"
+                             )[1].click()
+    except Exception:
+        print("Falha ao clicar em gerar")
+    sleep(3)
+
+    dt_now = dt.now(tz.utc) - td(hours=3)
+    div = None
+
+    while True:
+        try:
+            div = driver.find_element(By.CSS_SELECTOR, ".c-easy-msg-item")
+            text = div.find_element(By.CSS_SELECTOR, ".easy-msg-item-time-box"
+                                    ).text
+            if dt.strptime(text, "%A, %B %d, %Y").date() != dt_now.date():
+                raise Exception(".")
+            tag = div.find_element(By.CSS_SELECTOR,
+                                   ".msg-item-header-info-panel-tag")
+            if tag.text != "Txt2Img":
+                raise Exception(".")
+            if not div.find_element(By.CSS_SELECTOR, ".media-attachments-img"):
+                raise Exception(".")
+            print("\nCriado.")
+            break
+        except Exception:
+            print(".", end="")
+            sleep(1.5)
+            continue
+
+    if not div:
+        print("Div não encontrada, algo deu errado.")
+        return
+
+    try:
+        dialog = driver.find_element(By.CSS_SELECTOR, ".dialog-close")
+        if dialog.is_displayed():
+            dialog.click()
+    except Exception:
+        print("Erro ao fechar popup de criação.")
+
+    sleep(2)
+    print("Clicando no botão de upscaling: ", end="")
+    driver.execute_script("""\
+document.querySelectorAll('.image-hover-mask')[0]\
+.querySelectorAll(".el-tooltip.button-item")[7].click();""")
+    print("pronto")
+    sleep(2)
+
+    profile.credits = int(profile.credits) - 6
+    chrome.update_json_config()
+
+    if qnt > 1:
+        sleep(2)
+        print("Clicando no botão de upscaling: ", end="")
+        driver.execute_script("""\
+document.querySelectorAll(".image-hover-mask")[1]\
+.querySelectorAll(".el-tooltip.button-item")[7].click();""")
+        print("pronto")
+        profile.credits = int(profile.credits) - 6
+        chrome.update_json_config()
+        sleep(2)
+
+
 if __name__ == "__main__":
     for _, profile in enumerate(chrome.profiles, start=1):
         try:
-            run(profile, False, False)
-        except Exception:
+            run2(profile)
+        except Exception as e:
+            print(e)
             continue
+
+    while any(int(profile.credits) >= 12 for profile in chrome.profiles):
+        for profile in chrome.profiles:
+            if int(profile.credits) >= 12:
+                try:
+                    run2(profile, second=True)
+                except Exception:
+                    continue
+
+    for _, profile in enumerate(chrome.profiles, start=1):
+        download_images(profile)
