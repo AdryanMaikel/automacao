@@ -1,0 +1,75 @@
+{
+    "path": "C:\\ChromeAutomacao",
+    "path_downloads": "C:\\Users\\Adryan\\Downloads",
+    "profiles": [
+        {
+            "name": "maikeladryan",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": 190
+        },
+        {
+            "name": "MrCamelGPlay",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "0"
+        },
+        {
+            "name": "adryanviu",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "10"
+        },
+        {
+            "name": "adrynhos2",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "0"
+        },
+        {
+            "name": "adryankhn",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "10"
+        },
+        {
+            "name": "adryankuhne",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "0"
+        },
+        {
+            "name": "adryanmckuhne",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "0"
+        },
+        {
+            "name": "WinxRoxa",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "0"
+        },
+        {
+            "name": "cco",
+            "profile": "",
+            "sizeimg": "9:16",
+            "prompt": "A half-body portrait of an adult American woman in comic book style, smiling, with long flowing hair. The woman should have realistic facial features and proportions, similar to modern American comic books like Marvel or DC. The illustration should have clean linework, strong contrast, and detailed shading to emphasize realism. The background should be colorful and vibrant, with dynamic lighting and graphic elements, giving a lively and energetic feel. Style reference: realistic comic book art, not cartoonish or stylized like anime or 3D models.",
+            "credits": "10"
+        }
+    ],
+    "arguments": [
+        "--disable-blink-features=AutomationControlled",
+        "--remote-debugging-port=9222",
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+    ]
+}
