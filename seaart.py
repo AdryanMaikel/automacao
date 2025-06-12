@@ -196,6 +196,7 @@ def run2(profile: Profile,
 
     print(f"Abrindo perfil: {profile.name}")
     driver = get_chrome(profile, close_chrome=close_chrome)
+    driver.maximize_window()
     print("Indo para seaart")
     driver.get(seaart_url)
 
@@ -386,7 +387,7 @@ document.querySelectorAll(".image-size-options-content-item")[1].click()\
     print("Clicando no botão de upscaling: ", end="")
     driver.execute_script("""\
 document.querySelectorAll('.image-hover-mask')[0]\
-.querySelectorAll(".el-tooltip.button-item")[7].click();""")
+.querySelector('.el-tooltip[data-sub-type="upscale"]').click();""")
     print("pronto")
     sleep(2)
 
@@ -397,8 +398,8 @@ document.querySelectorAll('.image-hover-mask')[0]\
         sleep(2)
         print("Clicando no botão de upscaling: ", end="")
         driver.execute_script("""\
-document.querySelectorAll(".image-hover-mask")[1]\
-.querySelectorAll(".el-tooltip.button-item")[7].click();""")
+document.querySelectorAll('.image-hover-mask')[1]\
+.querySelector('.el-tooltip[data-sub-type="upscale"]').click();""")
         print("pronto")
         profile.credits = int(profile.credits) - 6
         chrome.update_json_config()
