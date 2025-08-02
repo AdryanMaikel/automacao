@@ -106,9 +106,9 @@ document.querySelector('input[type="file"]').style.display = "block";
 
     print("Gerando vídeo...", end="")
     try:
-        qnt = driver.find_element(By.CSS_SELECTOR, ".sc-blPJYs.gWPxej")
+        qnt = driver.find_element(By.CSS_SELECTOR, ".sc-fjqcsI.fynqyt")
         if qnt and qnt.text.strip() == "10":
-            button = driver.find_element(By.CSS_SELECTOR, ".sc-MTrZc.dFOJkO")
+            button = driver.find_element(By.CSS_SELECTOR, ".sc-eKtKts.gyitYm")
             button.click()
             sleep(sleep_time)
             print("pronto.")
@@ -188,6 +188,6 @@ def download():
 
 
 if __name__ == "__main__":
-    # gerar()
-    download()
+    gerar()
+    # download()
     # print(os.listdir("img/20_05_2025/seaart"))

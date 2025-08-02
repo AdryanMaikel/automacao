@@ -22,6 +22,7 @@ from datetime import datetime as dt, timedelta as td, timezone as tz
 
 
 seaart_url = "https://www.seaart.ai/pt"
+seaart_url_image_creation = f"{seaart_url}/create/image"
 
 
 def close_chrome_if_it_is_running():
@@ -168,15 +169,14 @@ def download_images(profile: Profile):
 
 def scroll_element(driver: Chrome,
                    scroll_pause_time: float = 1,
-                   increment: int = 700):
+                   increment: int = 700,
+                   steps: int = 22):
     """Rola um elemento específico em incrementos de
 400 pixels com uma pausa de 1 segundo."""
     element = driver.find_element(**elements.scroll)
     current_position = 0
-    # last_height = driver.execute_script("return arguments[0].scrollHeight",
-    #                                     element)
 
-    for _ in range(20):
+    for _ in range(steps):
         driver.execute_script("""\
 arguments[0].scrollTo({
     top: """+str(current_position+increment)+""",
@@ -215,14 +215,14 @@ def run2(profile: Profile,
         except Exception:
             print("Falha ao fechar popup")
 
-    sleep(1)
+    sleep(3)
 
     print("Indo para area de criação")
     try:
         driver.find_element(By.CSS_SELECTOR, ".painting").click()
     except Exception:
         print("falha ao ir para area de criação!")
-        return
+        raise Exception("Falha ao ir para criação.")
 
     WebDriverWait(driver, 10).until(
         lambda d: d.execute_script("return document.readyState") == "complete"
@@ -294,11 +294,11 @@ document.querySelectorAll(".image-size-options-content-item")[1].click()\
             for _ in inputs[0].get_attribute("value"):
                 inputs[0].send_keys(Keys.BACKSPACE)
                 sleep(0.05)
-            inputs[0].send_keys("540")
+            inputs[0].send_keys("1024")
             for _ in inputs[1].get_attribute("value"):
                 inputs[1].send_keys(Keys.BACKSPACE)
                 sleep(0.05)
-            inputs[1].send_keys("960")
+            inputs[1].send_keys("1024")
 
     except Exception:
         print("Falha ao colocar em proporção.")
@@ -342,9 +342,7 @@ document.querySelectorAll(".image-size-options-content-item")[1].click()\
             print(".", end="")
 
     try:
-        driver.find_elements(By.CSS_SELECTOR,
-                             ".top-input-box .generate-btn"
-                             )[1].click()
+        driver.find_element(By.ID, "generate-btn").click()
     except Exception:
         print("Falha ao clicar em gerar")
     sleep(3)
@@ -387,7 +385,7 @@ document.querySelectorAll(".image-size-options-content-item")[1].click()\
     print("Clicando no botão de upscaling: ", end="")
     driver.execute_script("""\
 document.querySelectorAll('.image-hover-mask')[0]\
-.querySelector('.el-tooltip[data-sub-type="upscale"]').click();""")
+.querySelector('.el-tooltip[data-id="upscale"]').click();""")
     print("pronto")
     sleep(2)
 
@@ -399,18 +397,19 @@ document.querySelectorAll('.image-hover-mask')[0]\
         print("Clicando no botão de upscaling: ", end="")
         driver.execute_script("""\
 document.querySelectorAll('.image-hover-mask')[1]\
-.querySelector('.el-tooltip[data-sub-type="upscale"]').click();""")
+.querySelector('.el-tooltip[data-id="upscale"]').click();""")
         print("pronto")
         profile.credits = int(profile.credits) - 6
         chrome.update_json_config()
         sleep(2)
 
 
-if __name__ == "__main__":
+def run_all():
     for _, profile in enumerate(chrome.profiles, start=1):
         try:
             run2(profile)
         except Exception as e:
+            run2(profile)
             print(e)
             continue
 
@@ -424,3 +423,7 @@ if __name__ == "__main__":
 
     for _, profile in enumerate(chrome.profiles, start=1):
         download_images(profile)
+
+
+if __name__ == "__main__":
+    run_all()

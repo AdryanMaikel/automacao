@@ -42,6 +42,6 @@ image_hover = Element(By.CSS_SELECTOR, ".image-hover-mask")
 images = Element(By.CSS_SELECTOR, ".media-attachments-img")
 
 scroll = Element(By.CSS_SELECTOR, ".c-easy-task-view-scroll-wrap")
-gift = Element(By.CSS_SELECTOR, ".gift-btn-icon")
+gift = Element(By.CSS_SELECTOR, ".gift-btn")
 claim = Element(By.CSS_SELECTOR, ".claim-button")
-close_btn = Element(By.CSS_SELECTOR, ".el-dialog__body .close-btn")
+close_btn = Element(By.CSS_SELECTOR, ".dialog-manager .close-btn")

@@ -11,7 +11,6 @@ from seaart import (
     Keys
 )
 from elements import By
-from organizar import organizar_fotos
 
 import random
 
@@ -62,10 +61,12 @@ def select_image():
     return selected_image
 
 
-def gerar_video(profile: Profile):
+def gerar_video(profile: Profile, _i: int):
     close_chrome_if_it_is_running()
     driver = get_chrome(profile)
     driver.get("https://www.krea.ai/video")
+    # input("Pess enter\n")
+    # return
     sleep(3)
     try:
         text = driver.find_element(By.CSS_SELECTOR, ".svelte-gmpzcw").text
@@ -91,7 +92,10 @@ def gerar_video(profile: Profile):
 const input = document.querySelector("#image-upload-1");
 input.removeAttribute("hidden");
 """)
-        selected_image = select_image()
+        # selected_image = select_image()
+        path = r"C:\Users\Adryan\Videos\tarot\a fazer"
+        selected_image = os.path.join(path, [file for file in os.listdir(path)
+                                             if file.endswith(".png")][_i])
         print(f"Imagem selecionada: {os.path.basename(selected_image)}")
         upload = driver.find_element(By.ID, "image-upload-1")
         upload.send_keys(selected_image)
@@ -101,7 +105,8 @@ input.removeAttribute("hidden");
     sleep(2)
     try:
         textarea = driver.find_element(By.ID, "prompt")
-        textarea.send_keys(profile.prompt)
+        # textarea.send_keys(profile.prompt)
+        textarea.send_keys("A woman it's pointing at to the camera")
         textarea.send_keys(Keys.ENTER)
     except Exception:
         print("Erro ao gerar video")
@@ -112,7 +117,7 @@ def download_videos(profile: Profile):
     close_chrome_if_it_is_running()
     driver = get_chrome(profile)
     driver.get("https://www.krea.ai/video")
-    sleep(3)
+    sleep(10)
 
     try:
         driver.execute_script("""\
@@ -158,23 +163,25 @@ document.querySelector('.mt-10 button.tooltip-parent:nth-child(2)').click();
 
 def download_images_krea(profile):
     close_chrome_if_it_is_running()
+    sleep(3)
     driver = get_chrome(profile)
     driver.get("https://www.krea.ai/image")
 
     input("Baixar imagem?")
-    return
     images = driver.find_elements(By.CSS_SELECTOR, "img.object-contain")
     for i, image in enumerate(images):
         image_url = image.get_attribute("src")
         # print(image_url)
         download_image(image_url, f"{i}", profile.name, "krea")
-    organizar_fotos("img")
 
 
 if __name__ == "__main__":
-    for profile in chrome.profiles:
+    for i, profile in enumerate(chrome.profiles):
         # download_images_krea(profile)
-        # gerar_video(profile)
-        download_videos(profile)
+        path = r"C:\Users\Adryan\Videos\tarot\a fazer"
+        selected_image = os.path.join(path, [file for file in os.listdir(path)
+                                             if file.endswith(".png")][i])
+        gerar_video(profile, i)
+        # download_videos(profile)
 
         # input("continuar?")

@@ -35,6 +35,18 @@ def encontrar_e_extrair_zip(origem, destino):
 
 
 if __name__ == "__main__":
-    origem = r"C:\Users\Adryan\Downloads\Videos\imagens\novas"
-    destino = r"C:\Users\Adryan\Downloads\Videos\imagens\novas"
-    encontrar_e_extrair_zip(origem, destino)
+    # origem = r"C:\Users\Adryan\Downloads\Videos\imagens\novas"
+    # destino = r"C:\Users\Adryan\Downloads\Videos\imagens\novas"
+    # encontrar_e_extrair_zip(origem, destino)
+    import secrets
+    import string
+
+
+    def generate_password(length=16):
+        chars = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(secrets.choice(chars) for _ in range(length))
+
+    password = generate_password()
+    print(password)
+
+     
